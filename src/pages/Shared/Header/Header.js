@@ -6,13 +6,22 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import LesftSideNav from '../LeftSideNav/LesftSideNav';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../contexts/AuthProvider';
+import { Button, Image } from 'react-bootstrap';
+import { FaUser } from 'react-icons/fa';
 
 
 const Header = () => {
-    const { user } = useContext(AuthContext)
+    const { user, logOut } = useContext(AuthContext);
+    const handleSignOut = () => {
+        logOut()
+            .then(() => { })
+            .catch(error => {
+                console.error(error)
+            })
+    }
     return (
         <div>
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" >
                 <Container>
                     <Navbar.Brand ><Link to='/'>World Wide News</Link></Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -33,10 +42,24 @@ const Header = () => {
                             </NavDropdown>
                         </Nav>
                         <Nav>
-                            <Nav.Link href="#deets">{user?.displayName}</Nav.Link>
-                            <Nav.Link eventKey={2} href="#memes">
-                                Dank memes
-                            </Nav.Link>
+                            <Nav.Link href="#deets">{
+                                user?.uid ?
+                                    <>
+                                        <span className='me-2'>{user?.displayName}</span>
+                                        <Button onClick={handleSignOut}>LogOut</Button>
+                                    </> :
+                                    <>
+                                        <span className='me-2'> <Link to='/login'>Login</Link></span>
+                                        <span><Link to='/register'>Register</Link></span>
+                                    </>
+                            }</Nav.Link>
+                            <Link to='/profile'>
+                                {user?.photoURL ?
+                                    <Image roundedCircle style={{ height: "40px", background: 'white' }} src={user?.photoURL}></Image>
+                                    :
+                                    <FaUser className='text-warning'></FaUser>
+                                }
+                            </Link>
                         </Nav>
                         <div className='d-lg-none'>
                             <LesftSideNav></LesftSideNav>
